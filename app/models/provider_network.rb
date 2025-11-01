@@ -1,0 +1,2 @@
+class ProviderNetwork < ApplicationRecord
+end

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  metric_type: MyString
+  metric_name: MyString
+  score: 9.99
+  rating: MyString
+  measurement_date: 2025-11-01
+  source: MyString
+  notes: MyText
+
+two:
+  provider: two
+  metric_type: MyString
+  metric_name: MyString
+  score: 9.99
+  rating: MyString
+  measurement_date: 2025-11-01
+  source: MyString
+  notes: MyText

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  hospital_name: MyString
+  hospital_npi: MyString
+  affiliation_type: MyString
+  department: MyString
+  privileges: MyText
+  start_date: 2025-11-01
+  end_date: 2025-11-01
+  status: MyString
+
+two:
+  provider: two
+  hospital_name: MyString
+  hospital_npi: MyString
+  affiliation_type: MyString
+  department: MyString
+  privileges: MyText
+  start_date: 2025-11-01
+  end_date: 2025-11-01
+  status: MyString

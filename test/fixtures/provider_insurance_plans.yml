@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  insurance_plan: one
+  accepts_new_patients: false
+  effective_date: 2025-11-01
+  termination_date: 2025-11-01
+  status: MyString
+  network_tier: MyString
+  notes: MyText
+
+two:
+  provider: two
+  insurance_plan: two
+  accepts_new_patients: false
+  effective_date: 2025-11-01
+  termination_date: 2025-11-01
+  status: MyString
+  network_tier: MyString
+  notes: MyText

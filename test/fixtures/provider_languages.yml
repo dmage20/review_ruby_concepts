@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  language_code: MyString
+  language_name: MyString
+  proficiency_level: MyString
+
+two:
+  provider: two
+  language_code: MyString
+  language_name: MyString
+  proficiency_level: MyString

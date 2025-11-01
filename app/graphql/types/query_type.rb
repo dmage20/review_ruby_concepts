@@ -23,13 +23,14 @@ module Types
 
     # Provider queries
     field :providers, [Types::ProviderType], null: false, description: "Search all providers" do
-      argument :name, String, required: false
-      argument :specialty, String, required: false
-      argument :state, String, required: false
-      argument :city, String, required: false
-      argument :npi, String, required: false
-      argument :active_only, Boolean, required: false, default_value: true
-      argument :limit, Integer, required: false, default_value: 50
+      argument :name, String, required: false, description: "Search by provider name (first, last, or organization)"
+      argument :specialty, String, required: false, description: "Filter by specialty/taxonomy (e.g., 'Pediatrics', 'Family Medicine')"
+      argument :state, String, required: false, description: "Filter by state code (e.g., 'CA', 'NY')"
+      argument :city, String, required: false, description: "Filter by city name (e.g., 'Los Angeles')"
+      argument :npi, String, required: false, description: "Search by exact NPI number"
+      argument :insurance_carrier, String, required: false, description: "Filter by insurance carrier (e.g., 'Blue Cross Blue Shield')"
+      argument :active_only, Boolean, required: false, default_value: true, description: "Only return active providers"
+      argument :limit, Integer, required: false, default_value: 50, description: "Maximum number of results"
     end
 
     field :provider, Types::ProviderType, null: true, description: "Fetch a single provider by ID or NPI" do
@@ -37,12 +38,52 @@ module Types
       argument :npi, String, required: false
     end
 
-    def providers(name: nil, specialty: nil, state: nil, city: nil, npi: nil, active_only: true, limit: 50)
-      scope = Provider.all
+    def providers(name: nil, specialty: nil, state: nil, city: nil, npi: nil, insurance_carrier: nil, active_only: true, limit: 50)
+      scope = Provider.distinct
+
+      # Active providers only
       scope = scope.where(deactivation_date: nil) if active_only
-      scope = scope.where("first_name ILIKE ? OR last_name ILIKE ? OR organization_name ILIKE ?", "%#{name}%", "%#{name}%", "%#{name}%") if name
-      scope = scope.where(npi: npi) if npi
-      # Add more filters as needed
+
+      # Filter by name (first, last, or organization)
+      if name.present?
+        scope = scope.where(
+          "first_name ILIKE ? OR last_name ILIKE ? OR organization_name ILIKE ?",
+          "%#{name}%", "%#{name}%", "%#{name}%"
+        )
+      end
+
+      # Filter by exact NPI
+      scope = scope.where(npi: npi) if npi.present?
+
+      # Filter by specialty/taxonomy
+      if specialty.present?
+        scope = scope.joins(:taxonomies)
+          .where("taxonomies.specialization ILIKE ? OR taxonomies.classification ILIKE ? OR taxonomies.description ILIKE ?",
+                 "%#{specialty}%", "%#{specialty}%", "%#{specialty}%")
+      end
+
+      # Filter by state (via practice location address)
+      if state.present?
+        scope = scope.joins(:addresses)
+          .joins("INNER JOIN states ON states.id = addresses.state_id")
+          .where("addresses.address_purpose = 'LOCATION'")
+          .where("states.code = ?", state.upcase)
+      end
+
+      # Filter by city (via practice location address)
+      if city.present?
+        # Join to addresses if not already joined (state filter already joins)
+        scope = scope.joins(:addresses) unless state.present?
+        scope = scope.where("addresses.address_purpose = 'LOCATION'")
+          .where("addresses.city_name ILIKE ?", "%#{city}%")
+      end
+
+      # Filter by insurance carrier
+      if insurance_carrier.present?
+        scope = scope.joins(:insurance_plans)
+          .where("insurance_plans.carrier_name ILIKE ?", "%#{insurance_carrier}%")
+      end
+
       scope.limit(limit)
     end
 

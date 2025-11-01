@@ -12,6 +12,18 @@ class Provider < ApplicationRecord
   has_many :endpoints, dependent: :destroy
   has_one :authorized_official, dependent: :destroy
 
+  # Insurance & Network associations
+  has_many :provider_insurance_plans, dependent: :destroy
+  has_many :insurance_plans, through: :provider_insurance_plans
+  has_many :provider_network_memberships, dependent: :destroy
+  has_many :provider_networks, through: :provider_network_memberships
+  has_many :provider_quality_metrics, dependent: :destroy
+  has_many :hospital_affiliations, dependent: :destroy
+  has_many :provider_credentials, dependent: :destroy
+  has_many :provider_languages, dependent: :destroy
+  has_many :provider_specializations, dependent: :destroy
+  has_one :provider_practice_info, dependent: :destroy
+
   # Delegations
   has_many :cities, through: :addresses
   has_many :states, through: :addresses

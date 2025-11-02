@@ -16,6 +16,8 @@ gem "turbo-rails"
 gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
+# GraphQL API framework [https://graphql-ruby.org]
+gem "graphql", "~> 2.4"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -59,3 +61,4 @@ end
 # Using PostgreSQL full-text search instead of Elasticsearch
 # gem "searchkick", "~> 5.5"
 # gem "elasticsearch", "~> 7.17"
+gem "graphiql-rails", group: :development

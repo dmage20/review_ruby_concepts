@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  practice_name: MyString
+  accepts_new_patients: false
+  patient_age_range: MyString
+  languages_spoken: MyText
+  office_hours: MyText
+  accessibility_features: MyText
+  telehealth_available: false
+  appointment_wait_time: MyString
+  last_verified: 2025-11-01
+
+two:
+  provider: two
+  practice_name: MyString
+  accepts_new_patients: false
+  patient_age_range: MyString
+  languages_spoken: MyText
+  office_hours: MyText
+  accessibility_features: MyText
+  telehealth_available: false
+  appointment_wait_time: MyString
+  last_verified: 2025-11-01

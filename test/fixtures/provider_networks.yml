@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  network_name: MyString
+  network_type: MyString
+  carrier_name: MyString
+  coverage_area: MyString
+  status: MyString
+  description: MyText
+
+two:
+  network_name: MyString
+  network_type: MyString
+  carrier_name: MyString
+  coverage_area: MyString
+  status: MyString
+  description: MyText

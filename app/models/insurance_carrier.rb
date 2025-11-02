@@ -1,0 +1,2 @@
+class InsuranceCarrier < ApplicationRecord
+end

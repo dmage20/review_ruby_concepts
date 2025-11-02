@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider: one
+  specialization_name: MyString
+  focus_area: MyString
+  years_experience: 1
+  board_certified: false
+  certification_body: MyString
+
+two:
+  provider: two
+  specialization_name: MyString
+  focus_area: MyString
+  years_experience: 1
+  board_certified: false
+  certification_body: MyString

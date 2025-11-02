@@ -44,7 +44,12 @@ class Provider < ApplicationRecord
   # Full-text search scope using PostgreSQL tsvector
   scope :search_by_name, ->(query) {
     where("search_vector @@ plainto_tsquery('english', ?)", query)
-      .order(Arel.sql("ts_rank(search_vector, plainto_tsquery('english', '#{sanitize_sql_like(query)}')) DESC"))
+      .order(
+        sanitize_sql_for_order([
+          "ts_rank(search_vector, plainto_tsquery('english', ?)) DESC",
+          query
+        ])
+      )
   }
 
   scope :in_state, ->(state_code) {

@@ -10,13 +10,13 @@ class CreateIdentifiers < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :identifiers, [:provider_id, :identifier_type, :identifier_value],
+    add_index :identifiers, [ :provider_id, :identifier_type, :identifier_value ],
       unique: true,
       name: 'index_identifiers_unique'
     # Note: index on provider_id and state_id are automatically created by t.references
     add_index :identifiers, :identifier_type
     add_index :identifiers, :identifier_value
-    add_index :identifiers, [:identifier_type, :identifier_value],
+    add_index :identifiers, [ :identifier_type, :identifier_value ],
       name: 'index_identifiers_type_value'
   end
 end

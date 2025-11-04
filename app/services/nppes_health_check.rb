@@ -27,7 +27,7 @@ class NppesHealthCheck
       all_pass = checks.values.all?
 
       {
-        status: all_pass ? 'healthy' : 'unhealthy',
+        status: all_pass ? "healthy" : "unhealthy",
         checks: checks,
         summary: generate_summary(checks)
       }
@@ -111,7 +111,7 @@ class NppesHealthCheck
         WHERE indexname = 'index_providers_on_search_vector'
       SQL
 
-      result.first['count'].to_i > 0
+      result.first["count"].to_i > 0
     end
 
     def check_no_orphaned_addresses
@@ -128,7 +128,7 @@ class NppesHealthCheck
 
     def check_no_duplicate_npis
       # Each NPI should be unique
-      duplicates = ActiveRecord::Base.connection.execute(<<~SQL).first['count'].to_i
+      duplicates = ActiveRecord::Base.connection.execute(<<~SQL).first["count"].to_i
         SELECT COUNT(*) FROM (
           SELECT npi
           FROM providers
@@ -142,7 +142,7 @@ class NppesHealthCheck
 
     def check_no_multiple_primary_taxonomies
       # Each provider should have at most one primary taxonomy
-      multiple = ActiveRecord::Base.connection.execute(<<~SQL).first['count'].to_i
+      multiple = ActiveRecord::Base.connection.execute(<<~SQL).first["count"].to_i
         SELECT COUNT(*) FROM (
           SELECT provider_id
           FROM provider_taxonomies

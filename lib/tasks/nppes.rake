@@ -16,8 +16,8 @@
 
 namespace :nppes do
   desc "Import NPPES data from CSV file (full import with blue-green deployment)"
-  task :import, [:csv_path] => :environment do |t, args|
-    csv_path = args[:csv_path] || ENV['NPPES_CSV_PATH']
+  task :import, [ :csv_path ] => :environment do |t, args|
+    csv_path = args[:csv_path] || ENV["NPPES_CSV_PATH"]
 
     if csv_path.blank?
       puts "ERROR: CSV path required"
@@ -47,7 +47,7 @@ namespace :nppes do
       puts "\n[1/4] Creating staging table..."
       step_start = Time.current
 
-      staging_sql = File.read(Rails.root.join('db', 'staging_providers.sql'))
+      staging_sql = File.read(Rails.root.join("db", "staging_providers.sql"))
       ActiveRecord::Base.connection.execute(staging_sql)
 
       puts "  ✓ Staging table created in #{(Time.current - step_start).round(1)}s"
@@ -61,7 +61,7 @@ namespace :nppes do
 
       # Read the CSV header to get column names
       header = File.open(csv_path, &:readline).chomp
-      columns = header.split(',').map { |col| sanitize_column_name(col) }
+      columns = header.split(",").map { |col| sanitize_column_name(col) }
 
       # Build COPY command
       copy_sql = <<~SQL
@@ -72,7 +72,7 @@ namespace :nppes do
 
       # Execute COPY
       conn.copy_data(copy_sql) do
-        File.open(csv_path, 'r') do |file|
+        File.open(csv_path, "r") do |file|
           while line = file.gets
             conn.put_copy_data(line)
           end
@@ -81,7 +81,7 @@ namespace :nppes do
 
       staging_count = ActiveRecord::Base.connection.execute(
         "SELECT COUNT(*) FROM staging_providers"
-      ).first['count'].to_i
+      ).first["count"].to_i
 
       step_duration = Time.current - step_start
       puts "  ✓ Loaded #{staging_count.to_s(:delimited)} records in #{step_duration.round(1)}s"
@@ -126,8 +126,8 @@ namespace :nppes do
   end
 
   desc "Apply weekly incremental update from CSV"
-  task :update, [:csv_path] => :environment do |t, args|
-    csv_path = args[:csv_path] || ENV['NPPES_UPDATE_CSV_PATH']
+  task :update, [ :csv_path ] => :environment do |t, args|
+    csv_path = args[:csv_path] || ENV["NPPES_UPDATE_CSV_PATH"]
 
     if csv_path.blank?
       puts "ERROR: CSV path required"
@@ -173,7 +173,7 @@ namespace :nppes do
     print "Are you sure you want to rollback? This will restore the previous dataset. (y/N): "
     confirmation = STDIN.gets.chomp
 
-    unless confirmation.downcase == 'y'
+    unless confirmation.downcase == "y"
       puts "Rollback cancelled."
       exit 0
     end
@@ -198,7 +198,7 @@ namespace :nppes do
       puts "  #{status} #{name.to_s.humanize}"
     end
 
-    if result[:status] == 'healthy'
+    if result[:status] == "healthy"
       puts "\n✓ All checks passed"
       exit 0
     else
@@ -208,8 +208,8 @@ namespace :nppes do
   end
 
   desc "Download latest NPPES file from CMS"
-  task :download, [:destination] => :environment do |t, args|
-    destination = args[:destination] || ENV['NPPES_DOWNLOAD_PATH'] || Rails.root.join('tmp', 'nppes_data.zip')
+  task :download, [ :destination ] => :environment do |t, args|
+    destination = args[:destination] || ENV["NPPES_DOWNLOAD_PATH"] || Rails.root.join("tmp", "nppes_data.zip")
 
     puts "\n" + "="*70
     puts "NPPES FILE DOWNLOAD"
@@ -218,8 +218,8 @@ namespace :nppes do
     puts "Destination: #{destination}"
     puts "="*70
 
-    require 'open-uri'
-    require 'fileutils'
+    require "open-uri"
+    require "fileutils"
 
     # CMS download page URL (user needs to get actual file URL from the page)
     cms_url = "https://download.cms.gov/nppes/NPI_Files.html"
@@ -237,9 +237,9 @@ namespace :nppes do
   end
 
   desc "Extract NPPES ZIP file"
-  task :extract, [:zip_path, :destination] => :environment do |t, args|
-    zip_path = args[:zip_path] || ENV['NPPES_ZIP_PATH']
-    destination = args[:destination] || Rails.root.join('tmp', 'nppes_extracted')
+  task :extract, [ :zip_path, :destination ] => :environment do |t, args|
+    zip_path = args[:zip_path] || ENV["NPPES_ZIP_PATH"]
+    destination = args[:destination] || Rails.root.join("tmp", "nppes_extracted")
 
     if zip_path.blank?
       puts "ERROR: ZIP path required"
@@ -289,10 +289,10 @@ namespace :nppes do
   end
 
   desc "Extract sample records from full NPPES file for testing"
-  task :extract_sample, [:source, :destination, :count] => :environment do |t, args|
-    source = args[:source] || ENV['NPPES_SOURCE_CSV']
-    destination = args[:destination] || Rails.root.join('tmp', 'nppes_sample.csv').to_s
-    count = (args[:count] || ENV['SAMPLE_COUNT'] || 10_000).to_i
+  task :extract_sample, [ :source, :destination, :count ] => :environment do |t, args|
+    source = args[:source] || ENV["NPPES_SOURCE_CSV"]
+    destination = args[:destination] || Rails.root.join("tmp", "nppes_sample.csv").to_s
+    count = (args[:count] || ENV["SAMPLE_COUNT"] || 10_000).to_i
 
     if source.blank?
       puts "ERROR: Source CSV path required"
@@ -301,34 +301,34 @@ namespace :nppes do
       exit 1
     end
 
-    script_path = Rails.root.join('lib', 'scripts', 'extract_sample_nppes.rb')
+    script_path = Rails.root.join("lib", "scripts", "extract_sample_nppes.rb")
     system("ruby #{script_path} #{source} #{destination} #{count}")
   end
 
   # Helper method to sanitize CSV column names for PostgreSQL
   def sanitize_column_name(name)
     # Remove quotes, convert spaces to underscores, lowercase
-    name = name.gsub(/^"|"$/, '')  # Remove surrounding quotes
-    name = name.gsub(/\s+/, '_')   # Spaces to underscores
-    name = name.gsub(/[().]/, '')  # Remove parentheses and periods
+    name = name.gsub(/^"|"$/, "")  # Remove surrounding quotes
+    name = name.gsub(/\s+/, "_")   # Spaces to underscores
+    name = name.gsub(/[().]/, "")  # Remove parentheses and periods
     name = name.downcase
-    name = name.gsub(/\/_/, '_')   # Clean up double underscores
-    name = name.gsub(/_+/, '_')    # Clean up multiple underscores
-    name = name.gsub(/^_|_$/, '')  # Remove leading/trailing underscores
+    name = name.gsub(/\/_/, "_")   # Clean up double underscores
+    name = name.gsub(/_+/, "_")    # Clean up multiple underscores
+    name = name.gsub(/^_|_$/, "")  # Remove leading/trailing underscores
 
     # Map to our staging table column names
     column_mapping = {
-      'npi' => 'npi',
-      'entity_type_code' => 'entity_type_code',
-      'replacement_npi' => 'replacement_npi',
-      'employer_identification_number_ein' => 'ein',
-      'provider_organization_name_legal_business_name' => 'org_name',
-      'provider_last_name_legal_name' => 'last_name',
-      'provider_first_name' => 'first_name',
-      'provider_middle_name' => 'middle_name',
-      'provider_name_prefix_text' => 'name_prefix',
-      'provider_name_suffix_text' => 'name_suffix',
-      'provider_credential_text' => 'credential',
+      "npi" => "npi",
+      "entity_type_code" => "entity_type_code",
+      "replacement_npi" => "replacement_npi",
+      "employer_identification_number_ein" => "ein",
+      "provider_organization_name_legal_business_name" => "org_name",
+      "provider_last_name_legal_name" => "last_name",
+      "provider_first_name" => "first_name",
+      "provider_middle_name" => "middle_name",
+      "provider_name_prefix_text" => "name_prefix",
+      "provider_name_suffix_text" => "name_suffix",
+      "provider_credential_text" => "credential"
       # Add more mappings as needed...
     }
 

@@ -42,7 +42,7 @@ class NppesImporter
       }
 
       validations.each do |name, query|
-        count = execute_sql(query).first['count'].to_i
+        count = execute_sql(query).first["count"].to_i
         puts "  ✓ #{name}: #{count.to_s(:delimited)} records"
       end
 
@@ -59,7 +59,7 @@ class NppesImporter
       ActiveRecord::Base.transaction do
         tables.each do |table|
           # Check if old table exists (may not on first import)
-          old_exists = execute_sql(<<~SQL).first['exists']
+          old_exists = execute_sql(<<~SQL).first["exists"]
             SELECT EXISTS (
               SELECT FROM information_schema.tables
               WHERE table_schema = 'public'
@@ -95,26 +95,26 @@ class NppesImporter
       puts "="*70
 
       [
-        ["Providers", "SELECT COUNT(*) FROM providers"],
-        ["Individual Providers", "SELECT COUNT(*) FROM providers WHERE entity_type = 1"],
-        ["Organizations", "SELECT COUNT(*) FROM providers WHERE entity_type = 2"],
-        ["Active Providers", "SELECT COUNT(*) FROM providers WHERE deactivation_date IS NULL"],
-        ["Deactivated Providers", "SELECT COUNT(*) FROM providers WHERE deactivation_date IS NOT NULL"],
-        ["", ""],  # Blank line
-        ["Addresses", "SELECT COUNT(*) FROM addresses"],
-        ["Location Addresses", "SELECT COUNT(*) FROM addresses WHERE address_purpose = 'LOCATION'"],
-        ["Mailing Addresses", "SELECT COUNT(*) FROM addresses WHERE address_purpose = 'MAILING'"],
-        ["", ""],
-        ["Provider Taxonomies", "SELECT COUNT(*) FROM provider_taxonomies"],
-        ["Primary Taxonomies", "SELECT COUNT(*) FROM provider_taxonomies WHERE is_primary = true"],
-        ["", ""],
-        ["Identifiers", "SELECT COUNT(*) FROM identifiers"],
-        ["Authorized Officials", "SELECT COUNT(*) FROM authorized_officials"]
+        [ "Providers", "SELECT COUNT(*) FROM providers" ],
+        [ "Individual Providers", "SELECT COUNT(*) FROM providers WHERE entity_type = 1" ],
+        [ "Organizations", "SELECT COUNT(*) FROM providers WHERE entity_type = 2" ],
+        [ "Active Providers", "SELECT COUNT(*) FROM providers WHERE deactivation_date IS NULL" ],
+        [ "Deactivated Providers", "SELECT COUNT(*) FROM providers WHERE deactivation_date IS NOT NULL" ],
+        [ "", "" ],  # Blank line
+        [ "Addresses", "SELECT COUNT(*) FROM addresses" ],
+        [ "Location Addresses", "SELECT COUNT(*) FROM addresses WHERE address_purpose = 'LOCATION'" ],
+        [ "Mailing Addresses", "SELECT COUNT(*) FROM addresses WHERE address_purpose = 'MAILING'" ],
+        [ "", "" ],
+        [ "Provider Taxonomies", "SELECT COUNT(*) FROM provider_taxonomies" ],
+        [ "Primary Taxonomies", "SELECT COUNT(*) FROM provider_taxonomies WHERE is_primary = true" ],
+        [ "", "" ],
+        [ "Identifiers", "SELECT COUNT(*) FROM identifiers" ],
+        [ "Authorized Officials", "SELECT COUNT(*) FROM authorized_officials" ]
       ].each do |label, query|
         if label.empty?
           puts ""
         else
-          count = execute_sql(query).first['count'].to_i
+          count = execute_sql(query).first["count"].to_i
           puts "#{label.ljust(30)}: #{count.to_s(:delimited).rjust(20)}"
         end
       end
@@ -134,7 +134,7 @@ class NppesImporter
           execute_sql("DROP TABLE IF EXISTS #{table}_new CASCADE")
 
           # Check if old table exists
-          old_exists = execute_sql(<<~SQL).first['exists']
+          old_exists = execute_sql(<<~SQL).first["exists"]
             SELECT EXISTS (
               SELECT FROM information_schema.tables
               WHERE table_schema = 'public'
@@ -235,7 +235,7 @@ class NppesImporter
           updated_at = NOW();
       SQL
 
-      count = execute_sql("SELECT COUNT(*) FROM providers_new").first['count'].to_i
+      count = execute_sql("SELECT COUNT(*) FROM providers_new").first["count"].to_i
       duration = Time.current - start_time
 
       puts "  ✓ Imported #{count.to_s(:delimited)} providers in #{duration.round(1)}s"
@@ -308,7 +308,7 @@ class NppesImporter
         WHERE NULLIF(TRIM(s.practice_address_1), '') IS NOT NULL;
       SQL
 
-      count = execute_sql("SELECT COUNT(*) FROM addresses_new").first['count'].to_i
+      count = execute_sql("SELECT COUNT(*) FROM addresses_new").first["count"].to_i
       duration = Time.current - start_time
 
       puts "  ✓ Imported #{count.to_s(:delimited)} addresses in #{duration.round(1)}s"
@@ -428,7 +428,7 @@ class NppesImporter
           AND NULLIF(TRIM(s.ao_last_name), '') IS NOT NULL;
       SQL
 
-      count = execute_sql("SELECT COUNT(*) FROM authorized_officials_new").first['count'].to_i
+      count = execute_sql("SELECT COUNT(*) FROM authorized_officials_new").first["count"].to_i
       duration = Time.current - start_time
 
       puts "  ✓ Imported #{count.to_s(:delimited)} authorized officials in #{duration.round(1)}s"
@@ -459,7 +459,7 @@ class NppesImporter
 
     def validate_referential_integrity
       # Check for orphaned addresses
-      orphaned_addresses = execute_sql(<<~SQL).first['count'].to_i
+      orphaned_addresses = execute_sql(<<~SQL).first["count"].to_i
         SELECT COUNT(*) FROM addresses_new
         WHERE provider_id NOT IN (SELECT id FROM providers_new)
       SQL
@@ -471,7 +471,7 @@ class NppesImporter
       end
 
       # Check for orphaned provider taxonomies
-      orphaned_taxonomies = execute_sql(<<~SQL).first['count'].to_i
+      orphaned_taxonomies = execute_sql(<<~SQL).first["count"].to_i
         SELECT COUNT(*) FROM provider_taxonomies_new
         WHERE provider_id NOT IN (SELECT id FROM providers_new)
       SQL
@@ -483,7 +483,7 @@ class NppesImporter
       end
 
       # Check for providers with multiple primary taxonomies
-      multiple_primary = execute_sql(<<~SQL).first['count'].to_i
+      multiple_primary = execute_sql(<<~SQL).first["count"].to_i
         SELECT COUNT(*) FROM (
           SELECT provider_id
           FROM provider_taxonomies_new

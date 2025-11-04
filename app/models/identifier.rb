@@ -7,7 +7,7 @@ class Identifier < ApplicationRecord
   validates :identifier_type, presence: true
   validates :identifier_value, presence: true
   validates :identifier_value, uniqueness: {
-    scope: [:provider_id, :identifier_type]
+    scope: [ :provider_id, :identifier_type ]
   }
 
   # Scopes

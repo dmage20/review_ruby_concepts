@@ -23,13 +23,13 @@ class CreateAddresses < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :addresses, [:provider_id, :address_purpose]
+    add_index :addresses, [ :provider_id, :address_purpose ]
     # Note: indexes on city_id and state_id are automatically created by t.references
     add_index :addresses, :address_purpose
     add_index :addresses, :postal_code
 
     # Composite index for location searches
-    add_index :addresses, [:state_id, :city_id, :address_purpose],
+    add_index :addresses, [ :state_id, :city_id, :address_purpose ],
       where: "address_purpose = 'LOCATION'",
       name: 'index_addresses_location_search'
 

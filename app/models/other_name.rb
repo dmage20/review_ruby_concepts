@@ -5,7 +5,7 @@ class OtherName < ApplicationRecord
 
   def full_name
     if first_name.present?
-      [name_prefix, first_name, middle_name, last_name, name_suffix, credential]
+      [ name_prefix, first_name, middle_name, last_name, name_suffix, credential ]
         .compact.join(" ")
     else
       organization_name

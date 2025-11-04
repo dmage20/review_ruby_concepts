@@ -14,6 +14,6 @@ class Taxonomy < ApplicationRecord
   }
 
   def display_name
-    [classification, specialization].compact.join(" - ")
+    [ classification, specialization ].compact.join(" - ")
   end
 end

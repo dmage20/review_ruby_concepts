@@ -5,7 +5,7 @@
 #   worker = NppesUpdateWorker.new
 #   worker.perform('/path/to/weekly_update.csv')
 
-require 'csv'
+require "csv"
 
 class NppesUpdateWorker
   attr_reader :updated_count, :created_count, :error_count
@@ -63,7 +63,7 @@ class NppesUpdateWorker
   private
 
   def process_provider_row(row)
-    npi = row['NPI']
+    npi = row["NPI"]
 
     Provider.transaction do
       provider = Provider.find_or_initialize_by(npi: npi)
@@ -71,21 +71,21 @@ class NppesUpdateWorker
 
       # Update provider attributes
       provider.assign_attributes(
-        entity_type: row['Entity Type Code'].to_i,
-        first_name: row['Provider First Name'],
-        last_name: row['Provider Last Name (Legal Name)'],
-        middle_name: row['Provider Middle Name'],
-        name_prefix: row['Provider Name Prefix Text'],
-        name_suffix: row['Provider Name Suffix Text'],
-        credential: row['Provider Credential Text'],
-        gender: parse_gender(row['Provider Gender Code']),
-        organization_name: row['Provider Organization Name (Legal Business Name)'],
-        sole_proprietor: row['Is Sole Proprietor'] == 'Y',
-        org_subpart: row['Is Organization Subpart'] == 'Y',
-        enumeration_date: parse_date(row['Provider Enumeration Date']),
-        deactivation_date: parse_date(row['NPI Deactivation Date']),
-        deactivation_reason: row['NPI Deactivation Reason Code'],
-        reactivation_date: parse_date(row['NPI Reactivation Date'])
+        entity_type: row["Entity Type Code"].to_i,
+        first_name: row["Provider First Name"],
+        last_name: row["Provider Last Name (Legal Name)"],
+        middle_name: row["Provider Middle Name"],
+        name_prefix: row["Provider Name Prefix Text"],
+        name_suffix: row["Provider Name Suffix Text"],
+        credential: row["Provider Credential Text"],
+        gender: parse_gender(row["Provider Gender Code"]),
+        organization_name: row["Provider Organization Name (Legal Business Name)"],
+        sole_proprietor: row["Is Sole Proprietor"] == "Y",
+        org_subpart: row["Is Organization Subpart"] == "Y",
+        enumeration_date: parse_date(row["Provider Enumeration Date"]),
+        deactivation_date: parse_date(row["NPI Deactivation Date"]),
+        deactivation_reason: row["NPI Deactivation Reason Code"],
+        reactivation_date: parse_date(row["NPI Reactivation Date"])
       )
 
       provider.save!
@@ -116,42 +116,42 @@ class NppesUpdateWorker
     provider.addresses.destroy_all
 
     # Mailing address
-    if row['Provider First Line Business Mailing Address'].present?
-      state = State.find_by(code: row['Provider Business Mailing Address State Name'])
+    if row["Provider First Line Business Mailing Address"].present?
+      state = State.find_by(code: row["Provider Business Mailing Address State Name"])
       city = find_or_create_city(
-        row['Provider Business Mailing Address City Name'],
-        row['Provider Business Mailing Address State Name']
+        row["Provider Business Mailing Address City Name"],
+        row["Provider Business Mailing Address State Name"]
       )
 
       provider.addresses.create!(
-        address_purpose: 'MAILING',
-        address_1: row['Provider First Line Business Mailing Address'],
-        address_2: row['Provider Second Line Business Mailing Address'],
-        city_name: row['Provider Business Mailing Address City Name'],
-        postal_code: row['Provider Business Mailing Address Postal Code'],
-        telephone: row['Provider Business Mailing Address Telephone Number'],
-        fax_number: row['Provider Business Mailing Address Fax Number'],
+        address_purpose: "MAILING",
+        address_1: row["Provider First Line Business Mailing Address"],
+        address_2: row["Provider Second Line Business Mailing Address"],
+        city_name: row["Provider Business Mailing Address City Name"],
+        postal_code: row["Provider Business Mailing Address Postal Code"],
+        telephone: row["Provider Business Mailing Address Telephone Number"],
+        fax_number: row["Provider Business Mailing Address Fax Number"],
         state: state,
         city: city
       )
     end
 
     # Practice location address
-    if row['Provider First Line Business Practice Location Address'].present?
-      state = State.find_by(code: row['Provider Business Practice Location Address State Name'])
+    if row["Provider First Line Business Practice Location Address"].present?
+      state = State.find_by(code: row["Provider Business Practice Location Address State Name"])
       city = find_or_create_city(
-        row['Provider Business Practice Location Address City Name'],
-        row['Provider Business Practice Location Address State Name']
+        row["Provider Business Practice Location Address City Name"],
+        row["Provider Business Practice Location Address State Name"]
       )
 
       provider.addresses.create!(
-        address_purpose: 'LOCATION',
-        address_1: row['Provider First Line Business Practice Location Address'],
-        address_2: row['Provider Second Line Business Practice Location Address'],
-        city_name: row['Provider Business Practice Location Address City Name'],
-        postal_code: row['Provider Business Practice Location Address Postal Code'],
-        telephone: row['Provider Business Practice Location Address Telephone Number'],
-        fax_number: row['Provider Business Practice Location Address Fax Number'],
+        address_purpose: "LOCATION",
+        address_1: row["Provider First Line Business Practice Location Address"],
+        address_2: row["Provider Second Line Business Practice Location Address"],
+        city_name: row["Provider Business Practice Location Address City Name"],
+        postal_code: row["Provider Business Practice Location Address Postal Code"],
+        telephone: row["Provider Business Practice Location Address Telephone Number"],
+        fax_number: row["Provider Business Practice Location Address Fax Number"],
         state: state,
         city: city
       )
@@ -174,7 +174,7 @@ class NppesUpdateWorker
         taxonomy: taxonomy,
         license_number: row["Provider License Number_#{slot}"],
         license_state: State.find_by(code: row["Provider License Number State Code_#{slot}"]),
-        is_primary: row["Healthcare Provider Primary Taxonomy Switch_#{slot}"] == 'Y'
+        is_primary: row["Healthcare Provider Primary Taxonomy Switch_#{slot}"] == "Y"
       )
     end
   end
@@ -198,19 +198,19 @@ class NppesUpdateWorker
   end
 
   def sync_authorized_official(provider, row)
-    return if row['Authorized Official Last Name'].blank?
+    return if row["Authorized Official Last Name"].blank?
 
     provider.authorized_official&.destroy
 
     provider.create_authorized_official!(
-      first_name: row['Authorized Official First Name'],
-      last_name: row['Authorized Official Last Name'],
-      middle_name: row['Authorized Official Middle Name'],
-      title_or_position: row['Authorized Official Title or Position'],
-      telephone: row['Authorized Official Telephone Number'],
-      name_prefix: row['Authorized Official Name Prefix Text'],
-      name_suffix: row['Authorized Official Name Suffix Text'],
-      credential: row['Authorized Official Credential Text']
+      first_name: row["Authorized Official First Name"],
+      last_name: row["Authorized Official Last Name"],
+      middle_name: row["Authorized Official Middle Name"],
+      title_or_position: row["Authorized Official Title or Position"],
+      telephone: row["Authorized Official Telephone Number"],
+      name_prefix: row["Authorized Official Name Prefix Text"],
+      name_suffix: row["Authorized Official Name Suffix Text"],
+      credential: row["Authorized Official Credential Text"]
     )
   end
 
@@ -225,16 +225,16 @@ class NppesUpdateWorker
 
   def parse_date(date_string)
     return nil if date_string.blank?
-    Date.strptime(date_string, '%m/%d/%Y')
+    Date.strptime(date_string, "%m/%d/%Y")
   rescue ArgumentError
     nil
   end
 
   def parse_gender(gender_string)
     case gender_string&.strip&.upcase
-    when 'M' then 'M'
-    when 'F' then 'F'
-    when 'X' then 'X'
+    when "M" then "M"
+    when "F" then "F"
+    when "X" then "X"
     else nil
     end
   end

@@ -18,7 +18,7 @@ class Address < ApplicationRecord
   }
 
   def full_address
-    [address_1, address_2, city_name, state&.code, postal_code]
+    [ address_1, address_2, city_name, state&.code, postal_code ]
       .compact.join(", ")
   end
 

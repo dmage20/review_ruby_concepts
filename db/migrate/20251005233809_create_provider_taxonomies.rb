@@ -10,9 +10,9 @@ class CreateProviderTaxonomies < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :provider_taxonomies, [:provider_id, :taxonomy_id], unique: true
+    add_index :provider_taxonomies, [ :provider_id, :taxonomy_id ], unique: true
     # Note: index on taxonomy_id is automatically created by t.references
-    add_index :provider_taxonomies, [:provider_id, :is_primary], where: "is_primary = true"
+    add_index :provider_taxonomies, [ :provider_id, :is_primary ], where: "is_primary = true"
     # Note: index on license_state_id is automatically created by t.references
 
     # Add unique constraint: only one primary taxonomy per provider

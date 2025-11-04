@@ -16,7 +16,7 @@ module Types
     field :last_verified, GraphQL::Types::ISO8601Date, null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
-    
+
     field :provider, Types::ProviderType, null: true
   end
 end

@@ -3,8 +3,8 @@
 
 namespace :nppes do
   desc "Import NPPES data with dynamic staging table (for testing)"
-  task :import_dynamic, [:csv_path] => :environment do |t, args|
-    csv_path = args[:csv_path] || ENV['NPPES_CSV_PATH']
+  task :import_dynamic, [ :csv_path ] => :environment do |t, args|
+    csv_path = args[:csv_path] || ENV["NPPES_CSV_PATH"]
 
     if csv_path.blank?
       puts "ERROR: CSV path required"
@@ -31,7 +31,7 @@ namespace :nppes do
       # Step 1: Read CSV headers
       puts "\n[1/5] Reading CSV headers..."
       header_line = File.open(csv_path, &:readline).chomp
-      csv_columns = header_line.split(',')
+      csv_columns = header_line.split(",")
 
       puts "  ✓ Found #{csv_columns.length} columns"
 
@@ -112,7 +112,7 @@ namespace :nppes do
     SQL
 
     conn.copy_data(copy_sql) do
-      File.open(csv_path, 'r') do |file|
+      File.open(csv_path, "r") do |file|
         while line = file.gets
           conn.put_copy_data(line)
         end
@@ -121,7 +121,7 @@ namespace :nppes do
 
     count = ActiveRecord::Base.connection.execute(
       "SELECT COUNT(*) FROM staging_providers_dynamic"
-    ).first['count'].to_i
+    ).first["count"].to_i
 
     duration = Time.current - start_time
     puts "  ✓ Loaded #{number_with_delimiter(count)} records in #{duration.round(1)}s"
@@ -197,19 +197,19 @@ namespace :nppes do
 
   def sanitize_nppes_column(name)
     # Remove quotes
-    name = name.gsub(/^"|"$/, '')
+    name = name.gsub(/^"|"$/, "")
     # Convert to lowercase
     name = name.downcase
     # Replace spaces with underscores
-    name = name.gsub(/\s+/, '_')
+    name = name.gsub(/\s+/, "_")
     # Remove parentheses and periods
-    name = name.gsub(/[().]/, '')
+    name = name.gsub(/[().]/, "")
     # Remove special characters except underscores
-    name = name.gsub(/[^a-z0-9_]/, '_')
+    name = name.gsub(/[^a-z0-9_]/, "_")
     # Clean up multiple underscores
-    name = name.gsub(/_+/, '_')
+    name = name.gsub(/_+/, "_")
     # Remove leading/trailing underscores
-    name = name.gsub(/^_|_$/, '')
+    name = name.gsub(/^_|_$/, "")
     name
   end
 

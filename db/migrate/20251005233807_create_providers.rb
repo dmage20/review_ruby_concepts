@@ -71,12 +71,12 @@ class CreateProviders < ActiveRecord::Migration[7.2]
     add_index :providers, :search_vector, using: :gin
 
     # Add partial index for active providers
-    add_index :providers, [:last_name, :first_name],
+    add_index :providers, [ :last_name, :first_name ],
       where: "deactivation_date IS NULL AND entity_type = 1",
       name: 'index_providers_active_individuals'
 
     # Add composite index for common search patterns
-    add_index :providers, [:last_name, :first_name, :credential],
+    add_index :providers, [ :last_name, :first_name, :credential ],
       where: "entity_type = 1 AND deactivation_date IS NULL",
       name: 'index_providers_name_credential'
   end

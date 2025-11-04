@@ -7,7 +7,7 @@ class CreateCities < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :cities, [:name, :state_id], unique: true
+    add_index :cities, [ :name, :state_id ], unique: true
     add_index :cities, :name
   end
 end

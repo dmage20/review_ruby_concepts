@@ -14,8 +14,8 @@
 #   2. Destination CSV file (sample output)
 #   3. Number of records to extract (default: 10000)
 
-require 'csv'
-require 'fileutils'
+require "csv"
+require "fileutils"
 
 # Helper method to format numbers with thousand separators
 def format_number(number)
@@ -68,7 +68,7 @@ organization_count = 0
 individual_target = (record_count * 0.8).to_i  # 80% individuals
 organization_target = record_count - individual_target  # 20% organizations
 
-CSV.open(dest_path, 'w') do |csv_out|
+CSV.open(dest_path, "w") do |csv_out|
   CSV.foreach(source_path, headers: true).with_index do |row, index|
     # Write header
     if index == 0
@@ -76,13 +76,13 @@ CSV.open(dest_path, 'w') do |csv_out|
     end
 
     # Check entity type
-    entity_type = row['Entity Type Code']
+    entity_type = row["Entity Type Code"]
 
-    if entity_type == '1' && individual_count < individual_target
+    if entity_type == "1" && individual_count < individual_target
       csv_out << row
       individual_count += 1
       records_written += 1
-    elsif entity_type == '2' && organization_count < organization_target
+    elsif entity_type == "2" && organization_count < organization_target
       csv_out << row
       organization_count += 1
       records_written += 1

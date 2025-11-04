@@ -10,8 +10,8 @@ module Types
       context.schema.object_from_id(id, context)
     end
 
-    field :nodes, [Types::NodeType, null: true], null: true, description: "Fetches a list of objects given a list of IDs." do
-      argument :ids, [ID], required: true, description: "IDs of the objects."
+    field :nodes, [ Types::NodeType, null: true ], null: true, description: "Fetches a list of objects given a list of IDs." do
+      argument :ids, [ ID ], required: true, description: "IDs of the objects."
     end
 
     def nodes(ids:)
@@ -22,7 +22,7 @@ module Types
     # They will be entry points for queries on your schema.
 
     # Provider queries
-    field :providers, [Types::ProviderType], null: false, description: "Search all providers" do
+    field :providers, [ Types::ProviderType ], null: false, description: "Search all providers" do
       argument :name, String, required: false, description: "Search by provider name (first, last, or organization)"
       argument :specialty, String, required: false, description: "Filter by specialty/taxonomy (e.g., 'Pediatrics', 'Family Medicine')"
       argument :state, String, required: false, description: "Filter by state code (e.g., 'CA', 'NY')"
@@ -96,7 +96,7 @@ module Types
     end
 
     # Insurance Plan queries
-    field :insurance_plans, [Types::InsurancePlanType], null: false, description: "Fetch all insurance plans"
+    field :insurance_plans, [ Types::InsurancePlanType ], null: false, description: "Fetch all insurance plans"
     field :insurance_plan, Types::InsurancePlanType, null: true, description: "Fetch a single insurance plan" do
       argument :id, ID, required: true
     end
@@ -110,7 +110,7 @@ module Types
     end
 
     # Insurance Carrier queries
-    field :insurance_carriers, [Types::InsuranceCarrierType], null: false, description: "Fetch all insurance carriers"
+    field :insurance_carriers, [ Types::InsuranceCarrierType ], null: false, description: "Fetch all insurance carriers"
     field :insurance_carrier, Types::InsuranceCarrierType, null: true, description: "Fetch a single insurance carrier" do
       argument :id, ID, required: true
     end
@@ -124,7 +124,7 @@ module Types
     end
 
     # Provider Network queries
-    field :provider_networks, [Types::ProviderNetworkType], null: false, description: "Fetch all provider networks"
+    field :provider_networks, [ Types::ProviderNetworkType ], null: false, description: "Fetch all provider networks"
     field :provider_network, Types::ProviderNetworkType, null: true, description: "Fetch a single provider network" do
       argument :id, ID, required: true
     end
@@ -138,7 +138,7 @@ module Types
     end
 
     # Taxonomy queries
-    field :taxonomies, [Types::TaxonomyType], null: false, description: "Fetch all taxonomies/specialties" do
+    field :taxonomies, [ Types::TaxonomyType ], null: false, description: "Fetch all taxonomies/specialties" do
       argument :classification, String, required: false
       argument :limit, Integer, required: false, default_value: 100
     end
